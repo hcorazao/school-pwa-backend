@@ -35,10 +35,6 @@ const schoolSchema = new mongoose.Schema({
     schoolAchievement: {
         type: String,
     },
-    verified: {
-        type: Boolean,
-        default: false,
-    },
     authyId: String,
 },
     {

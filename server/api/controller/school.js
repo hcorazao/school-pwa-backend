@@ -54,11 +54,10 @@ function sendToken(authyId, res) {
                 message: 'There was some error sending OTP to cell phone.'
             });
         } else {
-            console.log(response);
-            return res.status(404).send({
+            return res.status(200).send({
                 success: true,
                 message: 'OTP Sent to the cell phone.',
-                data: authyId
+                authyId: authyId
             });
         }
     });
@@ -72,18 +71,22 @@ function sendToken(authyId, res) {
  */
 verifysms = async (req, res, next) => {
     try {
-        console.log('New verify request...');
         var id = req.param('id');
         var token = req.param('token');
 
-        authy.verify(id, token, function (verifyErr, verifyRes) {
-            console.log('In Verification...');
-            if (verifyErr) {
-                console.log(verifyErr);
-                res.send('OTP verification failed.');
-            } else if (verifyRes) {
-                console.log(verifyRes);
-                res.send('OTP Verified.');
+        authy.verify(id, token, function (err, response) {
+
+            if (err) {
+                return res.status(404).send({
+                    success: false,
+                    message: 'OTP verification failed.'
+                });
+            } else if (response) {
+                console.log(response);
+                return res.status(404).send({
+                    success: true,
+                    message: 'OTP Verified.'
+                });
             }
         })
     } catch (e) {
