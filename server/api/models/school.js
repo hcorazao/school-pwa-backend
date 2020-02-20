@@ -1,0 +1,50 @@
+const mongoose = require('mongoose');
+
+const schoolSchema = new mongoose.Schema({
+    schoolName: {
+        type: String,
+    },
+    schoolType: {
+        type: String,
+        enum: ['Public', 'Private', 'Magnet']
+    },
+    schoolLocation: {
+        type: String,
+    },
+    aboutSchoolFunds: {
+        type: String,
+    },
+    staffPoints: {
+        type: Boolean,
+        default: false
+    },
+    fullName: {
+        type: String,
+    },
+    mobileNumber: {
+        type: Number,
+        required: true
+    },
+    photo: {
+        type: String,
+        default: null,
+    },
+    schoolDescription: {
+        type: String,
+    },
+    schoolAchievement: {
+        type: String,
+    },
+    verified: {
+        type: Boolean,
+        default: false,
+    },
+    authyId: String,
+},
+    {
+        timestamps: true,
+        useNestedStrict: true
+
+    });
+
+module.exports = mongoose.model('School', schoolSchema);
