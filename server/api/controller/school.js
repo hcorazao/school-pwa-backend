@@ -1,6 +1,32 @@
 const School = require('../models/school');
 const { AUTHY_KEY } = require('../../config/config');
 const authy = require('authy')(AUTHY_KEY);
+
+/**
+ * Gel school by id
+ * @param {object} req
+ * @param {object} res
+ * @param {object} next
+ * @returns {object} reflection object
+ */
+getById = async (req, res, next) => {
+    try {
+        const school = await School.findById(req.params.id);
+        if (!school) {
+            return res.status(404).send({
+                success: false,
+                message: 'Not found!',
+                data: null
+            });
+        }
+        return res.status(200).send({
+            success: true,
+            data: school
+        });
+    } catch (e) {
+        return res.status(500).send(e);
+    }
+}
 /**
  * Get students
  * @param {object} req
@@ -10,11 +36,40 @@ const authy = require('authy')(AUTHY_KEY);
  */
 list = async (req, res, next) => {
     try {
+        var schoolPublic = [];
+        var schoolPrivate = [];
+        var schoolMagnet = [];
+        var obj = {};
         const school = await School.find();
-        return res.status(200).send({
-            success: true,
-            data: school
-        })
+        if (school.length > 0) {
+            for (let item in school) {
+                var type = school[item].schoolType;
+                if (type == 'Public') {
+                    obj['schoolType'] = type;
+                    schoolPublic.push(obj);
+                }
+                if (type == 'Private') {
+                    obj['schoolType'] = type;
+                    schoolPrivate.push(obj);
+                }
+                if (type == 'Magnet') {
+                    obj['schoolType'] = type;
+                    schoolMagnet.push(obj);
+                }
+            }
+            return res.status(200).send({
+                success: true,
+                schoolPublic: schoolPublic.length,
+                schoolPrivate: schoolPrivate.length,
+                schoolMagnet: schoolMagnet.length,
+                data: school
+            })
+        }
+        return res.status(404).send({
+            success: false,
+            message: 'Not found!',
+            data: null
+        });
     } catch (e) {
         return res.status(500).send(e);
     }
@@ -82,8 +137,7 @@ verifysms = async (req, res, next) => {
                     message: 'OTP verification failed.'
                 });
             } else if (response) {
-                console.log(response);
-                return res.status(404).send({
+                return res.status(200).send({
                     success: true,
                     message: 'OTP Verified.'
                 });
@@ -101,16 +155,25 @@ verifysms = async (req, res, next) => {
  * @returns {object} reflection object
  */
 create = async (req, res, next) => {
+
     try {
-        const school = new School(req.body);
-        const newSchool = await school.save();
-        return res.status(200).send({
-            success: true,
-            message: 'School created!',
-            data: newSchool
+        if (req.body.hasOwnProperty('authyId') && req.body.authyId != '') {
+            const school = new School(req.body);
+            const newSchool = await school.save();
+            return res.status(200).send({
+                success: true,
+                message: 'School added successfully!',
+                data: newSchool
+            })
+        }
+        return res.status(401).send({
+            success: false,
+            message: 'Something went wrong!',
+
         })
+
     } catch (e) {
         return res.status(500).send(e);
     }
 }
-module.exports = { list, sendsms, verifysms, create }
+module.exports = { list, getById, sendsms, verifysms, create }
