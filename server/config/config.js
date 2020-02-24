@@ -1,4 +1,8 @@
 const dotenv = require('dotenv');
+const uuid = require('uuidv4');
+
+
+
 dotenv.config();
 const config = {
     APP: process.env.APP || 'development',
@@ -10,6 +14,8 @@ const config = {
     TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID || 'AC193ef22b5fed89f7e43d727162efcde0',
     TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || '78fac0b1896f7ee4762980e1ebc00274',
     AUTHY_KEY: process.env.AUTHY_KEY || 'dRMulWmaSDLvcC3mKp1SeHy3eeT4TH9G',
+
+    uuid: uuid,
 };
 
 module.exports = config;

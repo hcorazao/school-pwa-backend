@@ -43,4 +43,14 @@ const schoolSchema = new mongoose.Schema({
 
     });
 
+schoolSchema.statics = {
+
+    // find query
+    async findSchool() {
+        const student = await this.find();
+        if (student) {
+            return student;
+        }
+    }
+}
 module.exports = mongoose.model('School', schoolSchema);

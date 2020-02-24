@@ -1,5 +1,5 @@
 const School = require('../models/school');
-const { AUTHY_KEY } = require('../../config/config');
+const { AUTHY_KEY, uuid } = require('../../config/config');
 const authy = require('authy')(AUTHY_KEY);
 
 /**
@@ -36,14 +36,19 @@ getById = async (req, res, next) => {
  */
 list = async (req, res, next) => {
     try {
-        var schoolPublic = [];
-        var schoolPrivate = [];
-        var schoolMagnet = [];
-        var obj = {};
-        const school = await School.find();
-        if (school.length > 0) {
-            for (let item in school) {
-                var type = school[item].schoolType;
+        const schoolPublic = [];
+        const schoolPrivate = [];
+        const schoolMagnet = [];
+        const obj = {};
+
+        const page = req.query.page;
+        const limit = 5;
+        const skip = page * limit;
+        const school = await School.find().skip(+skip).limit(+limit);
+        const schoolData = await School.findSchool();
+        if (schoolData.length > 0) {
+            for (let item in schoolData) {
+                var type = schoolData[item].schoolType;
                 if (type == 'Public') {
                     obj['schoolType'] = type;
                     schoolPublic.push(obj);
@@ -59,9 +64,11 @@ list = async (req, res, next) => {
             }
             return res.status(200).send({
                 success: true,
+                dataCount:{
                 schoolPublic: schoolPublic.length,
                 schoolPrivate: schoolPrivate.length,
                 schoolMagnet: schoolMagnet.length,
+                },
                 data: school
             })
         }
@@ -83,6 +90,13 @@ list = async (req, res, next) => {
 sendsms = async (req, res, next) => {
     const { email, mobileNumber, countryCode } = req.body;
     try {
+        const mobile = await School.findOne({ mobileNumber: mobileNumber })
+        if (mobile) {
+            return res.status(200).send({
+                success: false,
+                message: 'Phone Number allready registered. please use another number'
+            });
+        }
         authy.register_user(email, mobileNumber, countryCode, function (err, response) {
             if (err || !response.user) {
                 return res.status(404).send({
@@ -93,6 +107,7 @@ sendsms = async (req, res, next) => {
             let authyId = response.user.id;
             sendToken(authyId, res);
         });
+
     } catch (e) {
         return res.status(500).send(e);
     }
@@ -126,8 +141,9 @@ function sendToken(authyId, res) {
  */
 verifysms = async (req, res, next) => {
     try {
-        var id = req.param('id');
-        var token = req.param('token');
+
+        const id = req.query.id;
+        const token = req.query.token;
 
         authy.verify(id, token, function (err, response) {
 
@@ -155,9 +171,9 @@ verifysms = async (req, res, next) => {
  * @returns {object} reflection object
  */
 create = async (req, res, next) => {
-
     try {
-        if (req.body.hasOwnProperty('authyId') && req.body.authyId != '') {
+        if (req.body.authyId != '') {
+            req.body.photo = (req.file.path) ? req.file.path : '';
             const school = new School(req.body);
             const newSchool = await school.save();
             return res.status(200).send({
@@ -176,4 +192,5 @@ create = async (req, res, next) => {
         return res.status(500).send(e);
     }
 }
-module.exports = { list, getById, sendsms, verifysms, create }
+
+module.exports = { sendsms, verifysms, create, list, getById }

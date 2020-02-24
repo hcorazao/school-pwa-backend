@@ -8,7 +8,10 @@ const Staff = require('../models/staff');
  */
 list = async (req, res, next) => {
     try {
-        const staff = await Staff.find();
+        const page = req.query.page;
+        const limit = 5;
+        const skip = page * limit;
+        const staff = await Staff.find().skip(+skip).limit(+limit);
         return res.status(200).send({
             success: true,
             data: staff
@@ -26,7 +29,6 @@ list = async (req, res, next) => {
  * @returns {object} reflection object
  */
 create = async (req, res, next) => {
-
     try {
         const staff = new Staff(req.body);
         const newStaff = await staff.save();
