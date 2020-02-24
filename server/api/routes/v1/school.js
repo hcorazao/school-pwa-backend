@@ -1,7 +1,8 @@
 const express = require('express');
 const schoolCtrl = require('../../controller/school')
 const multer = require('multer');
-
+const validate = require("express-validation");
+const { createStudent } = require('../../validations/student.validation')
 
 // multer storage and image rename
 const storage = multer.diskStorage({
@@ -22,7 +23,7 @@ const router = express.Router();
 
 router.post('/otp-send', schoolCtrl.sendsms);
 router.get('/otp-verify', schoolCtrl.verifysms);
-router.post('/add', type, schoolCtrl.create);
+router.post('/add', type, validate(createStudent), schoolCtrl.create);
 //router.post('/image-upload', type, schoolCtrl.uploadImage);
 router.get('/data', schoolCtrl.list);
 router.get('/:id', schoolCtrl.getById);

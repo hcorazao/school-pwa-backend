@@ -6,6 +6,8 @@ const uuid = require('uuidv4');
 dotenv.config();
 const config = {
     APP: process.env.APP || 'development',
+    APP_URL: process.env.APP_URL || 'http://localhost:3000',
+    NODE_ENV: process.env.NODE_ENV || 'development',
     PORT: process.env.PORT || '3000',
     DB_HOST: process.env.DB_HOST || 'mongodb://localhost:27017/mvp',
     DB_NAME: process.env.DB_NAME || 'mvp',

@@ -64,10 +64,10 @@ list = async (req, res, next) => {
             }
             return res.status(200).send({
                 success: true,
-                dataCount:{
-                schoolPublic: schoolPublic.length,
-                schoolPrivate: schoolPrivate.length,
-                schoolMagnet: schoolMagnet.length,
+                dataCount: {
+                    schoolPublic: schoolPublic.length,
+                    schoolPrivate: schoolPrivate.length,
+                    schoolMagnet: schoolMagnet.length,
                 },
                 data: school
             })
