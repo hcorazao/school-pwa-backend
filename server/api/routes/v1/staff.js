@@ -2,8 +2,7 @@ const express = require('express');
 const staffCtrl = require('../../controller/staff')
 const router = express.Router();
 
-router.get('/data', staffCtrl.list);
-router.post('/add', staffCtrl.create);
-
+router.post('/', staffCtrl.create);
+router.get('/', staffCtrl.list);
 
 module.exports = router;

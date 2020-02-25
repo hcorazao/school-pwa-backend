@@ -12,10 +12,17 @@ list = async (req, res, next) => {
         const limit = 5;
         const skip = page * limit;
         const staff = await Staff.find().skip(+skip).limit(+limit);
+        if (staff.length > 0) {
+            return res.status(200).send({
+                success: true,
+                data: staff
+            })
+        }
         return res.status(200).send({
-            success: true,
-            data: staff
-        })
+            success: false,
+            message: 'Not found!',
+            data: null
+        });
     } catch (e) {
         return res.status(500).send(e);
     }

@@ -13,7 +13,7 @@ getById = async (req, res, next) => {
     try {
         const school = await School.findById(req.params.id);
         if (!school) {
-            return res.status(404).send({
+            return res.status(200).send({
                 success: false,
                 message: 'Not found!',
                 data: null
@@ -72,7 +72,7 @@ list = async (req, res, next) => {
                 data: school
             })
         }
-        return res.status(404).send({
+        return res.status(200).send({
             success: false,
             message: 'Not found!',
             data: null
@@ -171,10 +171,11 @@ verifysms = async (req, res, next) => {
  * @returns {object} reflection object
  */
 create = async (req, res, next) => {
+
     try {
         if (req.body.authyId != '') {
-            req.body.photo = (req.file.path) ? req.file.path : '';
             const school = new School(req.body);
+            school.photo = (req.file != undefined) ? req.file.path : '';
             const newSchool = await school.save();
             return res.status(200).send({
                 success: true,
