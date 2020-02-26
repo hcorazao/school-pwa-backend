@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const staffSchema = new mongoose.Schema({
+
+    schoolId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'School'
+    },
     staffName: {
         type: String,
     },

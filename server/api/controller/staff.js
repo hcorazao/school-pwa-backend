@@ -1,35 +1,8 @@
 const Staff = require('../models/staff');
-/**
- * Get staff
- * @param {object} req
- * @param {object} res
- * @param {object} next
- * @returns {object} reflection object
- */
-list = async (req, res, next) => {
-    try {
-        const page = req.query.page;
-        const limit = 5;
-        const skip = page * limit;
-        const staff = await Staff.find().skip(+skip).limit(+limit);
-        if (staff.length > 0) {
-            return res.status(200).send({
-                success: true,
-                data: staff
-            })
-        }
-        return res.status(200).send({
-            success: false,
-            message: 'Not found!',
-            data: null
-        });
-    } catch (e) {
-        return res.status(500).send(e);
-    }
-}
+
 
 /**
- * Add student
+ * Add staff
  * @param {object} req
  * @param {object} res
  * @param {object} next
@@ -49,4 +22,53 @@ create = async (req, res, next) => {
     }
 }
 
-module.exports = { list, create }
+/**
+ * Get all staff
+ * @param {object} req
+ * @param {object} res
+ * @param {object} next
+ * @returns {object} reflection object
+ */
+list = async (req, res, next) => {
+    try {
+        const page = req.query.page;
+        const limit = 5;
+        const skip = page * limit;
+        const staff = await Staff.find()
+            .skip(+skip)
+            .limit(+limit);
+        return res.status(200).send({
+            success: true,
+            data: staff
+        })
+
+    } catch (e) {
+        return res.status(500).send(e);
+    }
+}
+/**
+ * Get staff by school id
+ * @param {object} req
+ * @param {object} res
+ * @param {object} next
+ * @returns {object} reflection object
+ */
+getBySchoolId = async (req, res, next) => {
+    try {
+        const page = req.query.page;
+        const limit = 5;
+        const skip = page * limit;
+        const staff = await Staff.find({ schoolId: req.query.schoolId })
+            .skip(+skip)
+            .limit(+limit);
+        return res.status(200).send({
+            success: true,
+            data: staff
+        })
+    } catch (e) {
+        return res.status(500).send(e);
+    }
+}
+
+
+module.exports = { create, list, getBySchoolId }

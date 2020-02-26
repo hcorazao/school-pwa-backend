@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const schoolSchema = new mongoose.Schema({
     schoolName: {
         type: String,
@@ -47,8 +46,8 @@ schoolSchema.statics = {
 
     // find query
     async findSchool() {
-        const student = await this.find();
-        if (student) {
+        const student = await this.findOne();
+        if (!student) {
             return student;
         }
     }
