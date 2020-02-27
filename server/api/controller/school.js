@@ -12,13 +12,6 @@ const authy = require('authy')(AUTHY_KEY);
 getById = async (req, res, next) => {
     try {
         const school = await School.findById(req.params.id);
-        if (!school) {
-            return res.status(200).send({
-                success: false,
-                message: 'Not found!',
-                data: null
-            });
-        }
         return res.status(200).send({
             success: true,
             data: school
@@ -41,12 +34,17 @@ list = async (req, res, next) => {
         const schoolMagnet = [];
         const obj = {};
 
-        const page = req.query.page;
+        const { page, q } = req.query;
         const limit = 5;
         const skip = page * limit;
-        const school = await School.find().skip(+skip).limit(+limit);
+        let query = {};
+        if (q !== '') {
+            query = { schoolName: q };
+        }
+        const school = await School.find(query).skip(+skip).limit(+limit);
+
         const schoolData = await School.findSchool();
-        if (schoolData.length > 0) {
+        if (school.length > 0) {
             for (let item in schoolData) {
                 var type = schoolData[item].schoolType;
                 if (type == 'Public') {
@@ -62,21 +60,18 @@ list = async (req, res, next) => {
                     schoolMagnet.push(obj);
                 }
             }
-            return res.status(200).send({
-                success: true,
-                dataCount: {
-                    schoolPublic: schoolPublic.length,
-                    schoolPrivate: schoolPrivate.length,
-                    schoolMagnet: schoolMagnet.length,
-                },
-                data: school
-            })
+
         }
         return res.status(200).send({
-            success: false,
-            message: 'Not found!',
-            data: null
-        });
+            success: true,
+            dataCount: {
+                schoolPublic: schoolPublic.length,
+                schoolPrivate: schoolPrivate.length,
+                schoolMagnet: schoolMagnet.length,
+            },
+            data: school
+        })
+
     } catch (e) {
         return res.status(500).send(e);
     }

@@ -6,7 +6,7 @@ const multer = require('multer');
 // multer storage and image rename
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/student')
+        cb(null, 'uploads/school')
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname)
