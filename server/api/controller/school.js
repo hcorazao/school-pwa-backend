@@ -39,7 +39,7 @@ list = async (req, res, next) => {
         const skip = page * limit;
         let query = {};
         if (q !== '') {
-            query = { schoolName: q };
+            query = { schoolName: { $regex: `/^${q}/.*`, $options: "i" } };
         }
         const school = await School.find(query).skip(+skip).limit(+limit);
 
