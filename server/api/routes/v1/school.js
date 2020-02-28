@@ -21,13 +21,9 @@ const router = express.Router();
 
 
 router.post('/otp-send', schoolCtrl.sendsms);
-
 router.get('/otp-verify', schoolCtrl.verifysms);
-
-router.post('/', type,  schoolCtrl.create);
-
+router.post('/', type, schoolCtrl.create);
 router.get('/', schoolCtrl.list);
-
 router.get('/:id', schoolCtrl.getById);
 
 

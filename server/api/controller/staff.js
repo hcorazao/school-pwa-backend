@@ -55,12 +55,12 @@ list = async (req, res, next) => {
  */
 getBySchoolId = async (req, res, next) => {
     try {
-        const page = req.query.page;
+        const { page, schoolId, q } = req.query;
         const limit = 5;
         const skip = page * limit;
-        const staff = await Staff.find({ schoolId: req.query.schoolId })
-            .skip(+skip)
-            .limit(+limit);
+
+        const param = { limit, skip, q, schoolId };
+        const staff = await Staff.findStaff(param);
         return res.status(200).send({
             success: true,
             data: staff

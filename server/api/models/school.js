@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const schoolSchema = new mongoose.Schema({
     schoolName: {
         type: String,
@@ -42,12 +43,23 @@ const schoolSchema = new mongoose.Schema({
 
     });
 
+// Static methods
 schoolSchema.statics = {
 
-    // find query
-    async findSchool() {
-        const student = await this.findOne();
-        if (!student) {
+    /**
+     * Get all school ( & by search)
+     * @param {*} param 
+     */
+    async findSchool(param) {
+
+        let query = {};
+        if (param.q !== '') {
+            query = { schoolName: { $regex: `.*${param.q}.*`, $options: 'i' } };
+        }
+        const student = await this.find(query)
+            .limit(+param.limit)
+            .skip(+param.skip)
+        if (student) {
             return student;
         }
     }

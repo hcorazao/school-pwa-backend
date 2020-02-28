@@ -37,13 +37,10 @@ list = async (req, res, next) => {
         const { page, q } = req.query;
         const limit = 5;
         const skip = page * limit;
-        let query = {};
-        if (q !== '') {
-            query = { schoolName: { $regex: `/^${q}/.*`, $options: "i" } };
-        }
-        const school = await School.find(query).skip(+skip).limit(+limit);
 
-        const schoolData = await School.findSchool();
+        const param = { limit, skip, q };
+        const school = await School.findSchool(param);
+        const schoolData = await School.find();
         if (school.length > 0) {
             for (let item in schoolData) {
                 var type = schoolData[item].schoolType;
