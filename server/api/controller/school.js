@@ -29,10 +29,6 @@ getById = async (req, res, next) => {
  */
 list = async (req, res, next) => {
     try {
-        const schoolPublic = [];
-        const schoolPrivate = [];
-        const schoolMagnet = [];
-        const obj = {};
 
         const { page, q } = req.query;
         const limit = 5;
@@ -40,32 +36,13 @@ list = async (req, res, next) => {
 
         const param = { limit, skip, q };
         const school = await School.findSchool(param);
-        const schoolData = await School.find();
-        if (school.length > 0) {
-            for (let item in schoolData) {
-                var type = schoolData[item].schoolType;
-                if (type == 'Public') {
-                    obj['schoolType'] = type;
-                    schoolPublic.push(obj);
-                }
-                if (type == 'Private') {
-                    obj['schoolType'] = type;
-                    schoolPrivate.push(obj);
-                }
-                if (type == 'Magnet') {
-                    obj['schoolType'] = type;
-                    schoolMagnet.push(obj);
-                }
-            }
-
-        }
+        const schoolPublic = await School.count({ schoolType: 'Public' });
+        const schoolPrivate = await School.count({ schoolType: 'Private' });
+        const schoolMagnet = await School.count({ schoolType: 'Magnet' });
+        const count = { schoolPublic, schoolPrivate, schoolMagnet }
         return res.status(200).send({
             success: true,
-            dataCount: {
-                schoolPublic: schoolPublic.length,
-                schoolPrivate: schoolPrivate.length,
-                schoolMagnet: schoolMagnet.length,
-            },
+            dataCount: count,
             data: school
         })
 
@@ -82,13 +59,6 @@ list = async (req, res, next) => {
 sendsms = async (req, res, next) => {
     const { email, mobileNumber, countryCode } = req.body;
     try {
-        const mobile = await School.findOne({ mobileNumber: mobileNumber })
-        if (mobile) {
-            return res.status(200).send({
-                success: false,
-                message: 'Phone Number allready registered. please use another number'
-            });
-        }
         authy.register_user(email, mobileNumber, countryCode, function (err, response) {
             if (err || !response.user) {
                 return res.status(404).send({
