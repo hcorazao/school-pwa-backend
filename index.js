@@ -10,7 +10,7 @@ const { PORT } = require('./config/config');
 const getErrorCode = require('./src/utils/errors')
 
 mongoose.Promise = global.Promise;
-mongoose.connect(database.mongoConnectionString, { useNewUrlParser: true }, (err) => {
+mongoose.connect(database.mongoConnectionString, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
     if (err) {
         console.log(err);
     } else {
