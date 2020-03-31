@@ -104,10 +104,9 @@ const sendSms = {
         },
         countryCode: {
             name: 'countryCode',
-            type:  GraphQLNonNull
+            type: new GraphQLNonNull(GraphQLString)
         }
     },
-    
     resolve: async function (root, params) {
         try {
             const sendSms = new Promise((resolve, reject) => {

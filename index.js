@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const database = require('./config/database');
 const { PORT } = require('./config/config');
 const getErrorCode = require('./src/utils/errors')
+const path = require('path');
 
 mongoose.Promise = global.Promise;
 mongoose.connect(database.mongoConnectionString, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
@@ -17,21 +18,10 @@ mongoose.connect(database.mongoConnectionString, { useNewUrlParser: true, useUni
         console.log('db connection is okay');
     }
 });
-
 const app = express();
 app.use('*', cors());
 
-// app.use('/', (req, res) => {
-//     graphQLHttp({
-//         schema: schema,
-//         graphiql: true,
-//         context: { req },
-//         formatError: (err) => {
-//             const error = getErrorCode(err.message)
-//             return ({ message: error.message, statusCode: error.statusCode })
-//         }
-//     })(req, res)
-// });
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/', cors(), bodyParser.json(),
     graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
